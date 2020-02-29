@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pc_wc</title>
+    <style type="text/css">
+        #show{
+            /*border: 1px solid;*/
+            background-color: black;
+            border-radius: 50%;
+            width:5px;
+            height: 5px;
+            position: fixed;
+            left: 50px;
+            top:50px;
+        }
+    </style>
+</head>
+<body>
+<div id="show"></div>
+<p></p>
+<p></p>
+<p></p>
+<script>
+    var wc=new WebSocket("ws://192.168.0.105:4399");
+    var v=document.getElementById("show");
+    wc.onopen=function () {
+        console.log("wc opened");
+    };
+    wc.onmessage=function(e){
+        var msg=e.data;
+        console.log("received :"+msg);
+        var p = JSON.parse(msg);
+        var x=p.x;
+        var y=p.y;
+        document.querySelectorAll("p")[2].innerText=`{"x":${parseInt(x)},"y":${parseInt(y)}}`;
+        // v.innerText=`{"x":${parseInt(x)},"y":${parseInt(y)}}`;
+        v.style.left=x+'px';
+        v.style.top = y+'px';
+    }
+    wc.onerror=function () {
+        console.error("wc error occured");
+        alert("建立连接失败");
+    };
+    wc.onclose=function () {
+        console.log("wc closed");
+    };
+    document.onmousemove=function (e) {
+        document.querySelector("p").innerText=`(${e.clientX},${e.clientY})`;
+        document.querySelectorAll("p")[1].innerText=`window.innerHeight:${window.innerHeight},window.innerWidth:${window.innerWidth}`;
+    };
+    window.onbeforeunload = function() {//正确关闭websocket 避免服务器报错
+        wc.onclose = function () {};
+        wc.close()
+    };
+</script>
+</body>
+</html>
