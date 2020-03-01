@@ -33,9 +33,15 @@
         var p = JSON.parse(msg);
         var x=p.x;
         var y=p.y;
-        document.querySelectorAll("p")[2].innerText=`{"x":${parseInt(x)},"y":${parseInt(y)}}`;
-        // v.innerText=`{"x":${parseInt(x)},"y":${parseInt(y)}}`;
-        v.style.left=x+'px';
+        var mh=p.mh;
+        var mw=p.mw;
+        x=x*window.innerWidth/mw;
+        y=y*window.innerHeight/mh;
+        x = parseInt(x);
+        y = parseInt(y);
+        document.querySelectorAll("p")[2].innerText=`{"x":${x},"y":${y}}`;
+        // v.innerText=`{"x":${parsxeInt(x)},"y":${parseInt(y)}}`;
+        v.style.left= x+'px';
         v.style.top = y+'px';
     }
     wc.onerror=function () {

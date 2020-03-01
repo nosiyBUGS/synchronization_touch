@@ -27,6 +27,7 @@
 <p></p>
 <p></p>
 <p></p>
+<p></p><!--[3]-->
 <script>
     var wc=new WebSocket("ws://192.168.0.105:4399");
     var init_x=50,init_y=50;//初始坐标 与CSS保持一致
@@ -53,6 +54,7 @@
         e.stopPropagation();
         var x=e.changedTouches[0].clientX;
         var y=e.changedTouches[0].clientY;
+
         x = parseInt(x);
         y = parseInt(y);
         // var temp=`x:${x},y:${y}`;
@@ -67,9 +69,8 @@
         pre_y=y;//这里也要更新!
         document.querySelector("p").innerText=`(${x},${y}) window.innerHeight:${window.innerHeight},window.innerWidth:${window.innerWidth},
         changedTouches.length:${e.changedTouches.length},init_x:${init_x},init_y:${init_y}`;
-        var ratio_x = 1280 / window.innerWidth;
-        var radio_y = 602 / window.innerHeight;
-        var temp=`{"x":${parseInt(ratio_x*init_x)},"y":${parseInt(init_y/2)}}`;//y轴做适当比率转换
+
+        var temp=`{"x":${init_x},"y":${init_y},"mh":${window.innerHeight},"mw":${window.innerWidth}}`;//把mobile h w也带过去
         wc.send(temp);
     };
 
