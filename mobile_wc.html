@@ -20,6 +20,17 @@
             font-size: 2em;
             font-weight: bold;
         }
+        #ck {
+            position: fixed;
+            left: 50px;
+            top: 100px;
+            font-size: 1.5em;
+            border: none;
+            background-color: #dd0000eb;
+        }
+        #ck:active{
+            background-color: rgba(202, 255, 117, 0.85);
+        }
     </style>
 </head>
 <body>
@@ -28,6 +39,7 @@
 <p></p>
 <p></p>
 <p></p><!--[3]-->
+<button id="ck">点击</button>
 <script>
     var wc=new WebSocket("ws://192.168.0.105:4399");
     var init_x=50,init_y=50;//初始坐标 与CSS保持一致
@@ -48,6 +60,7 @@
     };
 
     var v=document.getElementById("show");
+    var ck=document.getElementById("ck");
     var pre_x=50,pre_y=50;//上个轨迹点坐标坐标 初始值跟CSS保持一致
     document.ontouchmove=function (e) {
         e.preventDefault();
@@ -65,17 +78,19 @@
         init_y+=dvy;//更新初始值
         v.style.left =init_x + 'px';
         v.style.top =init_y + 'px';//进行偏移
+        ck.style.left=x-30+'px';
+        ck.style.top=y-50+'px';//点击按钮的位置随手指变化
         pre_x=x;
         pre_y=y;//这里也要更新!
         document.querySelector("p").innerText=`(${x},${y}) window.innerHeight:${window.innerHeight},window.innerWidth:${window.innerWidth},
         changedTouches.length:${e.changedTouches.length},init_x:${init_x},init_y:${init_y}`;
 
-        var temp=`{"x":${init_x},"y":${init_y},"mh":${window.innerHeight},"mw":${window.innerWidth}}`;//把mobile h w也带过去
+        var temp=`{"ins":"point","x":${init_x},"y":${init_y},"mh":${window.innerHeight},"mw":${window.innerWidth}}`;//把mobile h w也带过去
         wc.send(temp);
     };
 
     document.ontouchstart=function (e) {
-        e.preventDefault();
+        // e.preventDefault();
         e.stopPropagation();
         var x=e.touches[0].clientX;
         var y=e.touches[0].clientY;
@@ -96,6 +111,17 @@
         document.querySelectorAll("p")[2].innerText = `(${x},${y}) window.innerHeight:${window.innerHeight},window.innerWidth:${window.innerWidth},
          changedTouches.length:${e.changedTouches.length}`;
     };
+    ck.ontouchend=function(e){
+        // e.preventDefault();
+        // e.stopPropagation();
+        // document.querySelectorAll("p")[3].innerText=`ck click (${parseInt(e.changedTouches[0].clientX)},${parseInt(e.changedTouches[0].clientY)})`;
+        //v.click();
+        var temp=`{"ins":"click"}`;
+        wc.send(temp);//发送点击指令
+    }
+    /*v.onclick=function(){
+        v.style.backgroundColor = "yellow";
+    }*/
     window.onbeforeunload = function() {//正确关闭websocket 避免服务器报错
         wc.onclose = function () {};
         wc.close()
